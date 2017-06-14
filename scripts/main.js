@@ -11,6 +11,7 @@
 
 function handValue(hand) {
   var handToValues = [];
+  var aceCount = 0;
   for (let i = 0; i < hand.length; i++) {
     var cardValue;
     switch (hand[i]) {
@@ -18,31 +19,32 @@ function handValue(hand) {
       case "Q":
       case "K":
         cardValue = 10;
+        handToValues.push(cardValue);
         break;
       case "A":
-        cardValue = [1, 11];
+        aceCount++;
         break;
       default:
         cardValue = parseInt(hand[i]);
+        handToValues.push(cardValue);
         break;
     }
-    handToValues.push(cardValue);
   }
-
-  // Swap so "A" is not first card, easier to assign hand value
-  if (typeof handToValues[0] != "number") {
-    var swap = handToValues[0];
-    handToValues[0] = handToValues[1];
-    handToValues[1] = swap;
+  // "As" pushed to the end, easier to assign hand value
+  var aceValues = [1, 11];
+  while (aceCount > 0) {
+    handToValues.push(aceValues);
+    aceCount--;
   }
+  console.log(handToValues);
 
   var value = 0;
   for (let i = 0; i < handToValues.length; i++) {
     if (typeof handToValues[i] != "number") {
-      if (value == 10 || value == 7) {
-        value += handToValues[i][1];
-      } else {
+      if (value + handToValues[i][1] > 21) {
         value += handToValues[i][0];
+      } else {
+        value += handToValues[i][1];
       }
     } else {
       value += handToValues[i];
